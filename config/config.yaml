@@ -1,0 +1,31 @@
+# Model Configuration
+model:
+  name: "mistralai/Mistral-7B-Instruct-v0.3"
+  device_map: "cuda"
+  torch_dtype: "float16"
+  load_in_4bit: true
+
+# Generation Configuration
+generation:
+  max_new_tokens: 512
+  do_sample: true
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+
+# UI Configuration
+ui:
+  title: "AI Chatbot - Mistral 7B"
+  width: 800
+  height: 600
+  theme:
+    bg_color: "#1e1e1e"
+    text_color: "#ffffff"
+    user_color: "#00ff00"
+    bot_color: "#00d9ff"
+    system_color: "#ffaa00"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: "logs/app.log"
