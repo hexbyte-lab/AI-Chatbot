@@ -7,7 +7,7 @@ import asyncio
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Dict, Optional
 
 # Import existing core components
 from src.models.model_manager import ModelManager
@@ -76,13 +76,18 @@ class PersistentGradioChat:
             self.current_session_id = session_id
             session = self.session_manager.get_session(session_id)
 
+            # Check if session exists
+            if session is None:
+                self.logger.error(f"Session {session_id} not found in database")
+                return [], f"Error: Session {session_id} not found"
+
             return chat_history, f"Loaded: {session['title']}"
 
         except Exception as e:
-            self.logger.error(f"Failed to load session: {e}")
+            self.logger.error(f"Failed to load session: {e}", exc_info=True)
             return [], f"Error loading session: {str(e)}"
 
-    def create_new_session(self, title: str = None) -> Tuple[List, str]:
+    def create_new_session(self, title: Optional[str] = None) -> Tuple[List, str]:
         """Create a new conversation session.
 
         Args:
@@ -96,18 +101,17 @@ class PersistentGradioChat:
 
         return [], f"New session created: {title or 'Untitled'}"
 
-    def get_session_list(self) -> List[Tuple[int, str]]:
+    def get_session_list(self):
         """Get list of sessions for dropdown.
 
         Returns:
-            List of (session_id, display_name) tuples
+            Dictionary mapping display labels to session IDs
         """
         sessions = self.session_manager.list_sessions(limit=100)
-        return [
-            (s["id"], f"{s['title']} ({s['message_count']} msgs)") for s in sessions
-        ]
+        # Return as dict: {label: value} where value is the session ID
+        return {f"{s['title']} ({s['message_count']} msgs)": s["id"] for s in sessions}
 
-    async def generate_response(
+    def generate_response(
         self,
         message: str,
         history: List[Dict[str, str]],
@@ -156,9 +160,14 @@ class PersistentGradioChat:
         try:
             # Prepare inputs
             device = self.model_manager.device
-            inputs = self.model_manager.tokenizer.apply_chat_template(
+            tokenizer = self.model_manager.tokenizer
+
+            inputs = tokenizer.apply_chat_template(
                 messages, return_tensors="pt", add_generation_prompt=True
             ).to(device)
+
+            # Create attention mask (fixes warning)
+            attention_mask = inputs.ne(tokenizer.pad_token_id).long().to(device)
 
             # Generation config
             gen_config = {
@@ -179,7 +188,13 @@ class PersistentGradioChat:
                 self.model_manager.tokenizer, skip_prompt=True, skip_special_tokens=True
             )
 
-            generation_kwargs = {"inputs": inputs, "streamer": streamer, **gen_config}
+            generation_kwargs = {
+                "inputs": inputs,
+                "attention_mask": attention_mask,
+                "streamer": streamer,
+                "pad_token_id": tokenizer.pad_token_id,
+                **gen_config,
+            }
 
             thread = threading.Thread(
                 target=self.model_manager.model.generate, kwargs=generation_kwargs
@@ -257,11 +272,6 @@ class PersistentGradioChat:
     def get_stats(self):
         """Get system and database statistics."""
         db_stats = self.session_manager.get_stats()
-        session = (
-            self.session_manager.get_session(self.current_session_id)
-            if self.current_session_id
-            else None
-        )
         msg_count = self.conversation.get_message_count()
         device = self.model_manager.device
         loaded = "✅" if self.model_manager.is_loaded else "❌"
@@ -372,14 +382,21 @@ class PersistentGradioChat:
                 label="Status", value="Initializing...", interactive=False
             )
 
-            # Load model on startup
+            # Load model and populate sessions on startup
+            def on_load():
+                """Initialize UI on page load."""
+                sessions = self.get_session_list()
+                # Return updated dropdown with choices
+                return gr.update(choices=list(sessions.items()), value=None)
+
             demo.load(fn=self.load_model_async, outputs=status_msg)
+            demo.load(fn=on_load, outputs=session_dropdown)
 
             # Event handlers
-            async def submit_message(message, history, temp, tokens, topp):
+            def submit_message(message, history, temp, tokens, topp):
                 if not message.strip():
                     return
-                async for updated_history in self.generate_response(
+                for updated_history in self.generate_response(
                     message, history, temp, tokens, topp, save_to_db=True
                 ):
                     yield updated_history, ""
@@ -408,17 +425,27 @@ class PersistentGradioChat:
 
             # Session management
             def refresh_session_list():
+                """Refresh the session dropdown list."""
                 sessions = self.get_session_list()
-                return gr.Dropdown(choices=sessions)
+                # Return updated dropdown with choices as list of (label, value) tuples
+                return gr.update(choices=list(sessions.items()), value=None)
 
             refresh_sessions_btn.click(
                 fn=refresh_session_list, outputs=session_dropdown
             )
 
             def load_selected_session(session_id):
-                if session_id:
+                """Load a session when selected from dropdown."""
+                if session_id is None:
+                    return [], "No session selected"
+
+                try:
+                    # Ensure session_id is an integer
+                    session_id = int(session_id)
                     return self.load_session(session_id)
-                return [], "No session selected"
+                except (ValueError, TypeError) as e:
+                    self.logger.error(f"Invalid session_id: {session_id}, error: {e}")
+                    return [], "Error: Invalid session ID"
 
             session_dropdown.change(
                 fn=load_selected_session,

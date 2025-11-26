@@ -31,20 +31,31 @@ class ResponseGenerator:
         try:
             # Prepare inputs
             device = self.model_manager.device
-            inputs = self.model_manager.tokenizer.apply_chat_template(
-                messages, return_tensors="pt"
-            ).to(device)
+            tokenizer = self.model_manager.tokenizer
+
+            inputs = tokenizer.apply_chat_template(messages, return_tensors="pt").to(
+                device
+            )
+
+            # Create attention mask (fixes warning)
+            attention_mask = inputs.ne(tokenizer.pad_token_id).long().to(device)
 
             # Create streamer
             streamer = TextIteratorStreamer(
-                self.model_manager.tokenizer, skip_prompt=True, skip_special_tokens=True
+                tokenizer, skip_prompt=True, skip_special_tokens=True
             )
 
             # Get generation config
             gen_config = self.model_manager.get_generation_config()
 
             # Generation parameters
-            generation_kwargs = {"inputs": inputs, "streamer": streamer, **gen_config}
+            generation_kwargs = {
+                "inputs": inputs,
+                "attention_mask": attention_mask,
+                "streamer": streamer,
+                "pad_token_id": tokenizer.pad_token_id,
+                **gen_config,
+            }
 
             # Start generation thread
             thread = threading.Thread(

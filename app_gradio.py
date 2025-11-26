@@ -5,11 +5,10 @@ Replaces tkinter with async streaming web interface.
 
 import gradio as gr
 import asyncio
-import yaml
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 
 # Import existing core components
 from src.models.model_manager import ModelManager
@@ -48,7 +47,7 @@ class GradioChat:
             self.logger.error(f"Model loading failed: {e}", exc_info=True)
             return f"❌ Error loading model: {str(e)}"
 
-    async def generate_response(
+    def generate_response(
         self,
         message: str,
         history: List[Dict[str, str]],
@@ -91,9 +90,14 @@ class GradioChat:
         try:
             # Prepare inputs
             device = self.model_manager.device
-            inputs = self.model_manager.tokenizer.apply_chat_template(
+            tokenizer = self.model_manager.tokenizer
+
+            inputs = tokenizer.apply_chat_template(
                 messages, return_tensors="pt", add_generation_prompt=True
             ).to(device)
+
+            # Create attention mask (fixes warning)
+            attention_mask = inputs.ne(tokenizer.pad_token_id).long().to(device)
 
             # Generation config with dynamic parameters
             gen_config = {
@@ -115,7 +119,13 @@ class GradioChat:
                 self.model_manager.tokenizer, skip_prompt=True, skip_special_tokens=True
             )
 
-            generation_kwargs = {"inputs": inputs, "streamer": streamer, **gen_config}
+            generation_kwargs = {
+                "inputs": inputs,
+                "attention_mask": attention_mask,
+                "streamer": streamer,
+                "pad_token_id": tokenizer.pad_token_id,
+                **gen_config,
+            }
 
             # Start generation in background thread
             thread = threading.Thread(
@@ -298,10 +308,10 @@ class GradioChat:
             demo.load(fn=self.load_model_async, outputs=status_msg)
 
             # Event handlers
-            async def submit_message(message, history, temp, tokens, topp):
+            def submit_message(message, history, temp, tokens, topp):
                 if not message.strip():
                     return
-                async for updated_history in self.generate_response(
+                for updated_history in self.generate_response(
                     message, history, temp, tokens, topp
                 ):
                     yield updated_history, ""

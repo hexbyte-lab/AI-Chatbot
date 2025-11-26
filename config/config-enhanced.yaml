@@ -8,7 +8,7 @@ model:
   
   # Local model settings (only used if backend is "local")
   device_map: "auto"  # "cuda", "cpu", "mps", or "auto"
-  torch_dtype: "float16"
+  dtype: "float16"
   load_in_4bit: true
   
   # Cloud API settings (used for non-local backends)

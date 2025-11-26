@@ -66,10 +66,13 @@ Opens automatically in your browser at `http://localhost:7860`
 
 ## 📖 Full Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - Detailed usage guide
-- **[MODERNIZATION_SUMMARY.md](MODERNIZATION_SUMMARY.md)** - What's new
-- **[BUGS_AND_IMPROVEMENTS.md](BUGS_AND_IMPROVEMENTS.md)** - All improvements
-- **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)** - Technical details
+📚 **[View All Documentation](docs/)** - Complete documentation index
+
+Quick Links:
+- **[QUICKSTART.md](docs/QUICKSTART.md)** - Detailed usage guide
+- **[MODERNIZATION_SUMMARY.md](docs/MODERNIZATION_SUMMARY.md)** - What's new
+- **[BUGS_AND_IMPROVEMENTS.md](docs/BUGS_AND_IMPROVEMENTS.md)** - Known issues & improvements
+- **[Bug Fixes](docs/)** - All bug fix documentation
 
 ## Configuration
 
