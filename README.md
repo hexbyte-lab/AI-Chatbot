@@ -14,21 +14,17 @@ A **production-ready AI chatbot** with conversation persistence, multi-backend s
 
 ## Features
 
-### Original (tkinter):
-- 🤖 Powered by Mistral-7B-Instruct
-- 💾 In-memory conversation history
+- 🤖 Powered by Mistral-7B-Instruct (or 100+ other models via LiteLLM)
+- 🌐 Beautiful web interface (Gradio)
+- 💾 **Permanent storage** (SQLite persistence)
 - ⚡ Real-time streaming responses
-- ⏸️ Interrupt and continue generation
-- 🎨 Desktop GUI
-
-### New (Gradio + Enhanced):
-- ✨ Everything above **PLUS:**
-- 🌐 Beautiful web interface
-- 💾 **Permanent storage** (SQLite)
-- 🔄 **100+ AI models** supported (via LiteLLM)
-- 📝 Pre-built prompt templates
-- 📊 Statistics and analytics
+- 🎯 Session management - organize multiple conversations
+- 📝 Pre-built prompt templates for common tasks
+- 📤 Export conversations to JSON/Markdown
+- 🔍 Search through conversation history
+- 📊 Statistics and analytics dashboard
 - 🔧 Advanced configuration options
+- 🔄 Multi-backend support (local + cloud APIs)
 
 ## Requirements
 
@@ -53,21 +49,18 @@ pip install -r requirements.txt
 
 ## Quick Start
 
-### **Recommended: Modern Web Version**
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run persistent web UI (best option)
+# Run persistent web UI (recommended)
 python app_gradio_persistent.py
+
+# Or run basic version without persistence
+python app_gradio.py
 ```
 
 Opens automatically in your browser at `http://localhost:7860`
-
-### **Alternative: Original Desktop Version**
-```bash
-python src/main.py
-```
 
 ---
 
@@ -89,24 +82,20 @@ Edit `config/config.yaml` to customize:
 
 ```
 src/
-├── main.py                    # Original desktop app entry point
 ├── models/
 │   └── model_manager.py       # Model loading & management
-├── storage/                   # NEW: Persistence layer
+├── storage/                   # Persistence layer
 │   ├── database.py           # SQLite wrapper
 │   └── session_manager.py    # CRUD operations
 ├── core/
 │   ├── conversation.py       # Conversation state
 │   ├── generator.py          # Response generation
-│   └── llm_wrapper.py        # NEW: Multi-backend support
-├── ui/
-│   ├── chat_window.py        # Desktop UI components
-│   └── components.py         # Reusable widgets
+│   └── llm_wrapper.py        # Multi-backend support
 └── utils/
     ├── logger.py             # Logging
-    └── prompts.py            # NEW: Prompt templates
+    └── prompts.py            # Prompt templates
 
-# New Web Apps (Recommended)
+# Web Applications (at project root)
 app_gradio.py                 # Basic web UI
 app_gradio_persistent.py      # Advanced web UI with storage ⭐
 ```
@@ -123,9 +112,8 @@ Pull requests are welcome! Please read CONTRIBUTING.md first.
 
 | Version | Best For | Pros | Cons |
 |---------|----------|------|------|
-| **app_gradio_persistent.py** ⭐ | Daily use, production | Web UI, persistence, all features | Requires Gradio |
-| **app_gradio.py** | Quick testing | Simple, fast setup | No persistence |
-| **src/main.py** | Desktop preference | Standalone, no web server | Limited features |
+| **app_gradio_persistent.py** ⭐ | Daily use, production | Full features, persistence, session management | None |
+| **app_gradio.py** | Quick testing, temporary chats | Simple, fast setup | No persistence |
 
 **Recommendation:** Use `app_gradio_persistent.py` for the best experience!
 

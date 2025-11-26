@@ -10,9 +10,12 @@ env/
 dist/
 build/
 
-# Model cache
-models/
+# Model cache (downloaded model files, not source code)
+/models/
 .cache/
+*.bin
+*.safetensors
+*.gguf
 
 # IDE
 .vscode/

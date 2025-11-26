@@ -9,36 +9,7 @@
 
 ---
 
-## Option 1: Original Tkinter App (Desktop)
-
-### 1. Install Dependencies
-```bash
-# Activate your venv
-.\venv\Scripts\activate
-
-# Already installed, but verify:
-pip install -r requirements.txt
-```
-
-### 2. Run the App
-```bash
-python src/main.py
-```
-
-**Features:**
-- Desktop GUI application
-- Streaming responses
-- Basic conversation memory (in-memory only)
-- Stop/Continue generation
-
-**Limitations:**
-- No persistence (conversations lost on close)
-- Desktop only
-- Known UI threading issues
-
----
-
-## Option 2: Gradio Web UI (Recommended)
+## Option 1: Gradio Web UI (Recommended)
 
 ### 1. Install New Dependencies
 ```bash
@@ -65,7 +36,7 @@ python app_gradio.py
 
 ---
 
-## Option 3: Gradio with Persistence (Best)
+## Option 2: Gradio with Persistence (Best)
 
 ### 1. Run Persistent Version
 ```bash
@@ -87,7 +58,7 @@ python app_gradio_persistent.py
 
 ---
 
-## Option 4: Multi-Backend (Cloud APIs)
+## Option 3: Multi-Backend (Cloud APIs)
 
 ### 1. Install LiteLLM
 ```bash
@@ -147,17 +118,14 @@ print(response)
 
 | File | Description | Persistence | UI Type | Backend |
 |------|-------------|------------|---------|---------|
-| `src/main.py` | Original app | ❌ In-memory | Desktop (tkinter) | Local only |
-| `app_gradio.py` | Basic web | ❌ In-memory | Web | Local only |
-| `app_gradio_persistent.py` | Advanced web | ✅ SQLite | Web | Local only |
-| Custom wrapper | DIY | ✅ Optional | Any | Multi-backend |
+| `app_gradio_persistent.py` | Advanced web | ✅ SQLite | Web | Local + Multi-backend |
+| `app_gradio.py` | Basic web | ❌ In-memory | Web | Local + Multi-backend |
 
 ### Which Should You Use?
 
-**For quick testing:** `app_gradio.py`
 **For daily use:** `app_gradio_persistent.py` ⭐ **RECOMMENDED**
+**For quick testing:** `app_gradio.py`
 **For deployment:** `app_gradio_persistent.py` + LiteLLM
-**For legacy reasons:** `src/main.py`
 
 ---
 

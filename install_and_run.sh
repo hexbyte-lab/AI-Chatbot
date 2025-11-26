@@ -33,11 +33,10 @@ echo "🚀 Launching AI Chatbot..."
 echo ""
 echo "Choose your version:"
 echo "1. Gradio Persistent (Recommended) - Full features + storage"
-echo "2. Gradio Basic - Simple web UI"
-echo "3. Original Desktop (tkinter) - Desktop app"
+echo "2. Gradio Basic - Simple web UI (no persistence)"
 echo ""
 
-read -p "Enter choice (1-3, default: 1): " choice
+read -p "Enter choice (1-2, default: 1): " choice
 choice=${choice:-1}
 
 case $choice in
@@ -51,16 +50,9 @@ case $choice in
     2)
         echo ""
         echo "🌐 Starting Gradio Basic version..."
-        echo "Features: Web UI, streaming, basic features"
+        echo "Features: Web UI, streaming, temporary conversations"
         echo ""
         python app_gradio.py
-        ;;
-    3)
-        echo ""
-        echo "🖥️ Starting Desktop version..."
-        echo "Features: Desktop GUI, basic features"
-        echo ""
-        python src/main.py
         ;;
     *)
         echo "Invalid choice. Starting recommended version (Gradio Persistent)..."
