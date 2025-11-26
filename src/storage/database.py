@@ -28,6 +28,9 @@ class Database:
         self.connection = sqlite3.connect(str(self.db_path), check_same_thread=False)
         self.connection.row_factory = sqlite3.Row
 
+        # Enable foreign key constraints (required for CASCADE DELETE to work)
+        self.connection.execute("PRAGMA foreign_keys = ON")
+
         cursor = self.connection.cursor()
 
         # Create sessions table

@@ -20,7 +20,12 @@ Welcome to the AI Chatbot documentation! This folder contains all the detailed d
 - **[BUGFIX_SESSION_LOADING.md](BUGFIX_SESSION_LOADING.md)** - Session loading error fixes (NoneType issues)
 - **[BUGFIX_DROPDOWN_FORMAT.md](BUGFIX_DROPDOWN_FORMAT.md)** - Dropdown format fix for Gradio 6.x
 - **[BUGFIX_EXPORT_NONE_HANDLING.md](BUGFIX_EXPORT_NONE_HANDLING.md)** - Export functionality None handling fixes
+- **[BUGFIX_DELETE_SESSION.md](BUGFIX_DELETE_SESSION.md)** - Foreign key constraints for CASCADE DELETE
+- **[BUGFIX_GPU_RAM_OFFLOAD.md](BUGFIX_GPU_RAM_OFFLOAD.md)** - Enable CPU/disk offload for low VRAM GPUs
 - **[FINAL_SESSION_FIX.md](FINAL_SESSION_FIX.md)** - Complete session loading solution
+
+### ✨ Features
+- **[FEATURE_AUTO_SESSION_TITLES.md](FEATURE_AUTO_SESSION_TITLES.md)** - Auto-generate meaningful session names
 
 ### 📝 Change Summaries
 - **[DESKTOP_REMOVAL_SUMMARY.md](DESKTOP_REMOVAL_SUMMARY.md)** - Summary of desktop version removal

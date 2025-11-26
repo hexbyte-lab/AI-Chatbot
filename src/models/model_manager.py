@@ -92,6 +92,7 @@ class ModelManager:
                     bnb_4bit_compute_dtype=torch.float16,
                     bnb_4bit_use_double_quant=True,
                     bnb_4bit_quant_type="nf4",
+                    llm_int8_enable_fp32_cpu_offload=True,  # Enable CPU offload for low VRAM
                 )
 
             # Determine dtype
@@ -99,7 +100,8 @@ class ModelManager:
             dtype = getattr(torch, dtype_str) if dtype_str != "auto" else "auto"
 
             # Load model with device detection
-            device_map = self.device if self.device == "cpu" else "auto"
+            # Use "auto" to allow automatic CPU offloading if GPU RAM is insufficient
+            device_map = "auto" if self.device != "cpu" else "cpu"
 
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_name,
@@ -108,6 +110,7 @@ class ModelManager:
                 dtype=dtype,
                 trust_remote_code=True,
                 low_cpu_mem_usage=True,
+                offload_folder="offload",  # Folder for disk offloading if needed
             )
 
             self.is_loaded = True
@@ -120,7 +123,7 @@ class ModelManager:
         except Exception as e:
             error_msg = f"Failed to load model: {str(e)}"
             if progress_callback:
-                progress_callback(f"❌ {error_msg}")
+                progress_callback(f"ERROR: {error_msg}")
             raise RuntimeError(error_msg) from e
 
     def get_generation_config(self):

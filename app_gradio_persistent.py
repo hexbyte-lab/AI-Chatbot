@@ -215,6 +215,13 @@ class PersistentGradioChat:
                 self.session_manager.add_message(
                     self.current_session_id, "assistant", full_response
                 )
+                
+                # Auto-generate title from first message (after first exchange)
+                message_count = self.session_manager.get_message_count(
+                    self.current_session_id
+                )
+                if message_count == 2:  # First user message + first assistant response
+                    self.session_manager.auto_generate_title(self.current_session_id)
 
             yield new_history + [{"role": "assistant", "content": full_response}]
 

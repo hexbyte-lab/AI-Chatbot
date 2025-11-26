@@ -17,6 +17,9 @@ build/
 *.safetensors
 *.gguf
 
+# Model offload folder (for CPU offloading)
+offload/
+
 # IDE
 .vscode/
 .idea/

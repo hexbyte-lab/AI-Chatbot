@@ -117,6 +117,34 @@ class SessionManager:
         self.db.execute(query, tuple(params))
         return True
 
+    def auto_generate_title(self, session_id: int) -> bool:
+        """Auto-generate session title from first user message.
+
+        Args:
+            session_id: Session ID
+
+        Returns:
+            True if title was generated
+        """
+        # Get first user message
+        messages = self.get_messages(session_id, limit=1)
+        if not messages:
+            return False
+
+        first_message = messages[0]["content"]
+        
+        # Generate title from first message
+        # Remove extra whitespace and newlines
+        title = " ".join(first_message.split())
+        
+        # Limit to 60 characters for clean display
+        if len(title) > 60:
+            title = title[:57] + "..."
+        
+        # Update session title
+        self.update_session(session_id, title=title)
+        return True
+
     def delete_session(self, session_id: int) -> bool:
         """Delete a session and all its messages.
 
