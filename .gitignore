@@ -24,6 +24,17 @@ models/
 logs/
 *.log
 
+# Database and runtime data
+data/
+*.db
+*.db-journal
+
+# Exports
+exports/
+
+# Cache
+cache/
+
 # OS
 .DS_Store
 Thumbs.db

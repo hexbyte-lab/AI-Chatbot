@@ -30,9 +30,10 @@ class ResponseGenerator:
 
         try:
             # Prepare inputs
+            device = self.model_manager.device
             inputs = self.model_manager.tokenizer.apply_chat_template(
                 messages, return_tensors="pt"
-            ).to("cuda")
+            ).to(device)
 
             # Create streamer
             streamer = TextIteratorStreamer(

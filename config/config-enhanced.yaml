@@ -1,0 +1,113 @@
+# Enhanced Configuration with Multi-Backend Support
+
+# Model Configuration
+model:
+  # Backend options: "local", "openai", "anthropic", "cohere", "together", "replicate"
+  backend: "local"
+  name: "mistralai/Mistral-7B-Instruct-v0.3"
+  
+  # Local model settings (only used if backend is "local")
+  device_map: "auto"  # "cuda", "cpu", "mps", or "auto"
+  torch_dtype: "float16"
+  load_in_4bit: true
+  
+  # Cloud API settings (used for non-local backends)
+  backend_config:
+    api_key: null  # Set via environment variable or here
+    verbose: false
+    timeout: 60
+  
+  # Fallback configuration (optional)
+  fallback:
+    enabled: false
+    backend: "openai"
+    name: "gpt-4o-mini"
+    conditions:
+      - "oom_error"  # Out of memory
+      - "no_gpu"     # No GPU available
+
+# Generation Configuration
+generation:
+  max_new_tokens: 512
+  do_sample: true
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+
+# UI Configuration
+ui:
+  title: "AI Chatbot - Mistral 7B"
+  width: 800
+  height: 600
+  theme:
+    bg_color: "#1e1e1e"
+    text_color: "#ffffff"
+    user_color: "#00ff00"
+    bot_color: "#00d9ff"
+    system_color: "#ffaa00"
+  
+  # Gradio-specific settings
+  gradio:
+    server_name: "0.0.0.0"
+    server_port: 7860
+    share: false  # Set to true for public URL
+    show_error: true
+    inbrowser: true
+    max_file_size: 10  # MB for file uploads
+
+# Database Configuration
+database:
+  path: "data/chatbot.db"
+  backup:
+    enabled: true
+    interval: 3600  # seconds (1 hour)
+    max_backups: 10
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: "logs/app.log"
+  max_size: 10485760  # 10 MB
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Prompt Templates
+prompts:
+  # Custom prompts can be added here
+  # See config/prompts.yaml for more examples
+  enabled: true
+  config_file: "config/prompts.yaml"
+
+# Performance & Caching
+performance:
+  cache:
+    enabled: true
+    path: "cache/"
+    max_size_mb: 1000
+    ttl: 3600  # Time to live in seconds
+  
+  # Token budget management
+  token_budget:
+    enabled: true
+    max_tokens_per_conversation: 8000
+    warning_threshold: 6000
+
+# Export Settings
+export:
+  directory: "exports/"
+  formats: ["json", "markdown", "txt"]
+  include_metadata: true
+
+# Security
+security:
+  # Rate limiting (for web deployments)
+  rate_limit:
+    enabled: false
+    requests_per_minute: 20
+  
+  # Content filtering
+  content_filter:
+    enabled: false
+    blocked_patterns: []
+

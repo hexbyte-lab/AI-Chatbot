@@ -1,0 +1,24 @@
+# Core ML Dependencies
+transformers>=4.35.0
+torch>=2.0.0
+accelerate>=0.25.0
+bitsandbytes>=0.41.0
+
+# Configuration
+pyyaml>=6.0
+
+# New: Web UI (Gradio)
+gradio>=4.0.0
+
+# New: Multi-backend LLM support (optional but recommended)
+litellm>=1.0.0
+
+# New: Database (already in Python stdlib, but explicit for clarity)
+# sqlite3 is built-in to Python
+
+# Utilities
+tqdm>=4.65.0
+
+# Optional: Better async support for advanced features
+aiofiles>=23.0.0
+

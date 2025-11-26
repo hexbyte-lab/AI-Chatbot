@@ -1,0 +1,82 @@
+# Custom Prompt Templates
+# Additional prompts beyond the built-in defaults
+
+prompts:
+  - name: "api_design"
+    template: |
+      Design a RESTful API for {feature}. Include:
+      - Endpoint structure
+      - HTTP methods
+      - Request/response schemas
+      - Error handling
+      - Authentication requirements
+    description: "API design assistant"
+    variables: ["feature"]
+    category: "architecture"
+  
+  - name: "sql_query"
+    template: |
+      Write a SQL query for the following requirement:
+      {requirement}
+      
+      Database schema:
+      {schema}
+      
+      Optimize for performance and include comments explaining the query logic.
+    description: "SQL query generator"
+    variables: ["requirement", "schema"]
+    category: "database"
+  
+  - name: "architecture"
+    template: |
+      Design a {architecture_type} architecture for:
+      {description}
+      
+      Requirements:
+      - Scalability: {scalability}
+      - Main technologies: {technologies}
+      
+      Provide a high-level design with component diagram and key decisions.
+    description: "System architecture design"
+    variables: ["architecture_type", "description", "scalability", "technologies"]
+    category: "architecture"
+  
+  - name: "interview_prep"
+    template: |
+      Help me prepare for a {level} {language} interview question:
+      {question}
+      
+      Provide:
+      - Optimal solution with explanation
+      - Time and space complexity
+      - Alternative approaches
+      - Common pitfalls
+    description: "Technical interview preparation"
+    variables: ["level", "language", "question"]
+    category: "education"
+  
+  - name: "commit_message"
+    template: |
+      Generate a conventional commit message for these changes:
+      
+      {changes}
+      
+      Use format: <type>(<scope>): <description>
+      Types: feat, fix, docs, style, refactor, test, chore
+    description: "Git commit message generator"
+    variables: ["changes"]
+    category: "development"
+  
+  - name: "algorithm_explain"
+    template: |
+      Explain the {algorithm} algorithm:
+      
+      - How it works (step-by-step)
+      - Time complexity
+      - Space complexity
+      - When to use it
+      - Example implementation in {language}
+    description: "Algorithm explainer"
+    variables: ["algorithm", "language"]
+    category: "education"
+
